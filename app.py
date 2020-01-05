@@ -438,8 +438,8 @@ def update_graph(temperature, response, units,
 #
 #      linemissaeff*= max_peak/max(linemissaeff)
 
-      if len(lines)>200:
-          ind = np.argsort(linemissaeff)[-200:]
+      if len(lines)>1000:
+          ind = np.argsort(linemissaeff)[-1000:]
           lines = lines[ind]
           linemissaeff=linemissaeff[ind]
 
@@ -447,7 +447,7 @@ def update_graph(temperature, response, units,
       ion_symbols = []
       for l in lines:
 
-        ion_symbols.append('<a href="http://www.atomdb.org/Webguide/transition_information.php?lower=%i&upper=%i&z0=%i&z1=%i" target="_blank">%s</a>'%(l['UpperLev'], l['LowerLev'], l['Element'], l['Ion'],spectroscopic_name(l['Element'],l['Ion'])))
+        ion_symbols.append('<a href="http://www.atomdb.org/Webguide/transition_information.php?lower=%i&upper=%i&z0=%i&z1=%i" target="_blank">%s</a>'%(l['LowerLev'], l['UpperLev'], l['Element'], l['Ion']-1,spectroscopic_name(l['Element'],l['Ion'])))
 
 
     #peak_mask = np.where(np.logical_and(displayspec<=max_peak,displayspec>=0.5*max_peak))
