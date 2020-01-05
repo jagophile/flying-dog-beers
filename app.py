@@ -19,28 +19,63 @@ label1='IBU'
 label2='ABV'
 githublink='https://github.com/austinlasseter/flying-dog-beers'
 sourceurl='https://www.flyingdog.com/beers/'
+data = 'response'
 
 ########### Set up the chart
-bitterness = go.Bar(
-    x=beers,
-    y=ibu_values,
-    name=label1,
-    marker={'color':color1}
-)
-alcohol = go.Bar(
-    x=beers,
-    y=abv_values,
-    name=label2,
-    marker={'color':color2}
+
+data = pickle.load(open('response/precalc_spec_acistest.pkl', 'rb'))
+
+binedges = data['ebins']
+displayspec = numpy.append(1e-40, data[30])
+
+trace1 = go.Scatter(x=binedges, y=displayspec,
+            line=dict(
+                shape = 'hv',
+                color = '#9467bd'
+            ),
+            mode='lines',
+            name='Plot')
+#bitterness = go.Bar(
+#    x=beers,
+#    y=ibu_values,
+#    name=label1,
+#    marker={'color':color1}
+#)
+#alcohol = go.Bar(
+#    x=beers,
+#    y=abv_values,
+#    name=label2,
+#    marker={'color':color2}
+#)
+
+#beer_data = [bitterness, alcohol]
+#beer_layout = go.Layout(
+#    barmode='group',
+#    title = 
+ 
+xaxis='keV'
+xaxis_type='Linear'
+yaxis_type='Linear'
+    
+ret = {
+     'data': [trace1],
+    'layout': go.Layout(
+            xaxis={'title': xaxis, 'type': 'linear' if xaxis_type == 'Linear' else 'log'},
+            yaxis={
+                'title': 'Emissivity*Aeff (ph cm^5 s^-1 bin^-1)',
+                'type': 'linear' if yaxis_type == 'Linear' else 'log'
+                },
+            #margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+            #legend={'x': 0, 'y': 1},
+            hovermode='closest',
+            uirevision = True,
+            showlegend=False,
+        )
+    }
+    
 )
 
-beer_data = [bitterness, alcohol]
-beer_layout = go.Layout(
-    barmode='group',
-    title = mytitle
-)
-
-beer_fig = go.Figure(data=beer_data, layout=beer_layout)
+beer_fig = go.Figure(data=ret['data'], layout=ret['layout'])
 
 
 ########### Initiate the app
