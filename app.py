@@ -73,7 +73,7 @@ ret = {
         )
     }
     
-)
+
 
 beer_fig = go.Figure(data=ret['data'], layout=ret['layout'])
 
