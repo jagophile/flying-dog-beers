@@ -77,7 +77,7 @@ data = 'response'
 #--    
 #--
 
-beer_fig = go.Figure(data=ret['data'], layout=ret['layout'])
+#beer_fig = go.Figure(data=ret['data'], layout=ret['layout'])
 
 
 ########### Initiate the app
