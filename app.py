@@ -4,7 +4,7 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import numpy
 import plotly.tools as tls
-from matplotlib.figure import Figure
+#from matplotlib.figure import Figure
 
 import pickle,os
 
@@ -266,30 +266,30 @@ def generate_values(temperature_index, units, resp):
     return (binedges, displayspec)
 
 #Function used to Generate Stem Plots
-def stem_plot(x, y):
-    """
-    Returns a matplotlib stem plot that is later converted into
-    a plotly graph that is fed into the dash routine later.
-
-    Parameters:
-    x (array): x coordinates of the stems
-    y (array): y coordinates of the stems
-
-    Returns:
-    plotly_fig (obj): A plotly figure object that converts the static
-    matplotlib stem plot into an interactive plot.
-    """
-    fig = Figure()
-    ax = fig.subplots()
-
-    x = x
-    y = y
-
-    ax.stem(x,y)
-
-    plotly_fig = tls.mpl_to_plotly(fig)
-
-    return plotly_fig
+#def stem_plot(x, y):
+#    """
+#    Returns a matplotlib stem plot that is later converted into
+#    a plotly graph that is fed into the dash routine later.
+#
+#    Parameters:
+#    x (array): x coordinates of the stems
+#    y (array): y coordinates of the stems
+#
+#    Returns:
+#    plotly_fig (obj): A plotly figure object that converts the static
+#    matplotlib stem plot into an interactive plot.
+#    """
+#    fig = Figure()
+#    ax = fig.subplots()
+#
+#    x = x
+#    y = y
+#
+#    ax.stem(x,y)
+#
+#    plotly_fig = tls.mpl_to_plotly(fig)
+#
+#    return plotly_fig
     
     
 temperatures = np.logspace(4,9,51)
@@ -390,7 +390,7 @@ app.layout = html.Div([
 def update_graph(temperature, response, units,
     xaxis_type, yaxis_type, show_needleplot):
 
-    t1=time.time()
+
     if units == 'Angstroms':
         xaxis = 'Wavelength(%s)'%(units)
         unit = 'A'
@@ -482,14 +482,14 @@ def update_graph(temperature, response, units,
       ion_symbols = np.array(ion_symbols)
     #spec_aeff = np.array(spec_aeff)
     #Make the needle plot via the stem_plot function above
-      if units.lower()=='kev':
-        needle_plot = stem_plot(HC_IN_KEV_A/lines['Lambda'], lines['Epsilon_Err'])
-      else:
-        needle_plot = stem_plot(lines['Lambda'], lines['Epsilon_Err'])
+    #  if units.lower()=='kev':
+    #    needle_plot = stem_plot(HC_IN_KEV_A/lines['Lambda'], lines['Epsilon_Err'])
+    #  else:
+    #    needle_plot = stem_plot(lines['Lambda'], lines['Epsilon_Err'])
     #Update each stick with the generated ion symbols found in thhe ion_symbols array
-      needle_plot.update_traces(hovertext=ion_symbols, hoverinfo='text')
-
-      data_list = [dat for dat in needle_plot['data']]
+    #  needle_plot.update_traces(hovertext=ion_symbols, hoverinfo='text')
+#
+#      data_list = [dat for dat in needle_plot['data']]
     else:
       data_list = []
     data_list.append(trace1)
