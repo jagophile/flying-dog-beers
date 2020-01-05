@@ -2,7 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
-import numpy
+import numpy as np
 import plotly.tools as tls
 #from matplotlib.figure import Figure
 
@@ -28,7 +28,7 @@ data = 'response'
 #--data = pickle.load(open('response/precalc_spec_acistest.pkl', 'rb'))
 #--
 #--binedges = data['ebins']
-#--displayspec = numpy.append(1e-40, data[30])
+#--displayspec = np.append(1e-40, data[30])
 #--
 #--trace1 = go.Scatter(x=binedges, y=displayspec,
 #--            line=dict(
