@@ -14,13 +14,13 @@ ibu_values=[35, 60, 85, 75]
 abv_values=[5.4, 7.1, 9.2, 4.3]
 color1='lightblue'
 color2='darkgreen'
-mytitle='Beer Comparison'
-tabtitle='beer!'
-myheading='Flying Dog Beers'
-label1='IBU'
-label2='ABV'
-githublink='https://github.com/austinlasseter/flying-dog-beers'
-sourceurl='https://www.flyingdog.com/beers/'
+mytitle='Plotting Spectral with AtomDB'
+tabtitle='Plotting Spectral with AtomDB'
+#myheading='Flying Dog Beers'
+#label1='IBU'
+#label2='ABV'
+githublink='https://github.com/jagophile/flying-dog-beers'
+#sourceurl='https://www.flyingdog.com/beers/'
 data = 'response'
 
 ########### Set up the chart
@@ -482,14 +482,14 @@ def update_graph(temperature, response, units,
       ion_symbols = np.array(ion_symbols)
     #spec_aeff = np.array(spec_aeff)
     #Make the needle plot via the stem_plot function above
-    #  if units.lower()=='kev':
-    #    needle_plot = stem_plot(HC_IN_KEV_A/lines['Lambda'], lines['Epsilon_Err'])
-    #  else:
-    #    needle_plot = stem_plot(lines['Lambda'], lines['Epsilon_Err'])
+      if units.lower()=='kev':
+        needle_plot = stem_plot(HC_IN_KEV_A/lines['Lambda'], lines['Epsilon_Err'])
+      else:
+        needle_plot = stem_plot(lines['Lambda'], lines['Epsilon_Err'])
     #Update each stick with the generated ion symbols found in thhe ion_symbols array
-    #  needle_plot.update_traces(hovertext=ion_symbols, hoverinfo='text')
+      needle_plot.update_traces(hovertext=ion_symbols, hoverinfo='text')
 #
-#      data_list = [dat for dat in needle_plot['data']]
+      data_list = [dat for dat in needle_plot['data']]
     else:
       data_list = []
     data_list.append(trace1)
