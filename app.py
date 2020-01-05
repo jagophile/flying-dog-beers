@@ -4,7 +4,7 @@ import dash_html_components as html
 import plotly.graph_objs as go
 import numpy as np
 import plotly.tools as tls
-#from matplotlib.figure import Figure
+from matplotlib.figure import Figure
 
 import pickle,os
 
@@ -266,30 +266,30 @@ def generate_values(temperature_index, units, resp):
     return (binedges, displayspec)
 
 #Function used to Generate Stem Plots
-#def stem_plot(x, y):
-#    """
-#    Returns a matplotlib stem plot that is later converted into
-#    a plotly graph that is fed into the dash routine later.
-#
-#    Parameters:
-#    x (array): x coordinates of the stems
-#    y (array): y coordinates of the stems
-#
-#    Returns:
-#    plotly_fig (obj): A plotly figure object that converts the static
-#    matplotlib stem plot into an interactive plot.
-#    """
-#    fig = Figure()
-#    ax = fig.subplots()
-#
-#    x = x
-#    y = y
-#
-#    ax.stem(x,y)
-#
-#    plotly_fig = tls.mpl_to_plotly(fig)
-#
-#    return plotly_fig
+def stem_plot(x, y):
+    """
+    Returns a matplotlib stem plot that is later converted into
+    a plotly graph that is fed into the dash routine later.
+
+    Parameters:
+    x (array): x coordinates of the stems
+    y (array): y coordinates of the stems
+
+    Returns:
+    plotly_fig (obj): A plotly figure object that converts the static
+    matplotlib stem plot into an interactive plot.
+    """
+    fig = Figure()
+    ax = fig.subplots()
+
+    x = x
+    y = y
+
+    ax.stem(x,y)
+
+    plotly_fig = tls.mpl_to_plotly(fig)
+
+    return plotly_fig
     
     
 temperatures = np.logspace(4,9,51)
@@ -342,7 +342,7 @@ app.layout = html.Div([
                 dcc.RadioItems(
                 id='xaxis_type',
                 options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
-                value='Log',
+                value='Linear',
                 labelStyle={'display': 'inline-block'}
                 ),
 
@@ -352,7 +352,7 @@ app.layout = html.Div([
                 dcc.RadioItems(
                 id='yaxis_type',
                 options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
-                value='Log',
+                value='Linear',
                 labelStyle={'display': 'inline-block'}
                 ),
 
