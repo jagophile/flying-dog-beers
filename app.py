@@ -8,6 +8,8 @@ from matplotlib.figure import Figure
 
 import pickle,os
 
+import time
+
 ########### Define your variables
 beers=['Chesapeake Stout', 'Snake Dog IPA', 'Imperial Porter', 'Double Dog IPA']
 ibu_values=[35, 60, 85, 75]
@@ -53,12 +55,12 @@ data = 'response'
 #--#beer_data = [bitterness, alcohol]
 #--#beer_layout = go.Layout(
 #--#    barmode='group',
-#--#    title = 
-#-- 
+#--#    title =
+#--
 #--xaxis='keV'
 #--xaxis_type='Linear'
 #--yaxis_type='Linear'
-#--    
+#--
 #--ret = {
 #--     'data': [trace1],
 #--    'layout': go.Layout(
@@ -74,7 +76,7 @@ data = 'response'
 #--            showlegend=False,
 #--        )
 #--    }
-#--    
+#--
 #--
 
 #beer_fig = go.Figure(data=ret['data'], layout=ret['layout'])
@@ -261,7 +263,7 @@ def generate_values(temperature_index, units, resp):
         binedges = ebins
         displayspec=spec
 
-    displayspec = np.append(1e-40,displayspec)
+    displayspec = np.append(displayspec, 1e-40)
 
     return (binedges, displayspec)
 
@@ -290,8 +292,8 @@ def stem_plot(x, y):
     plotly_fig = tls.mpl_to_plotly(fig)
 
     return plotly_fig
-    
-    
+
+
 temperatures = np.logspace(4,9,51)
 temperatures = np.around(temperatures, decimals=-4)
 
@@ -384,8 +386,8 @@ app.layout = html.Div([
     dash.dependencies.Input('xaxis_type', 'value'),
     dash.dependencies.Input('yaxis_type', 'value'),
     dash.dependencies.Input('show_needleplot','value')])
-    
-    
+
+
 
 def update_graph(temperature, response, units,
     xaxis_type, yaxis_type, show_needleplot):
@@ -443,12 +445,14 @@ def update_graph(temperature, response, units,
           lines = lines[ind]
           linemissaeff=linemissaeff[ind]
 
-
+      t1 = time.time()
       ion_symbols = []
       for l in lines:
 
         ion_symbols.append('<a href="http://www.atomdb.org/Webguide/transition_information.php?lower=%i&upper=%i&z0=%i&z1=%i" target="_blank">%s</a>'%(l['LowerLev'], l['UpperLev'], l['Element'], l['Ion']-1,spectroscopic_name(l['Element'],l['Ion'])))
+      t2 = time.time()
 
+      print("Time for generating symbols: %fs"%(t2-t1))
 
     #peak_mask = np.where(np.logical_and(displayspec<=max_peak,displayspec>=0.5*max_peak))
     #measured_peaks = displayspec[peak_mask]
@@ -482,17 +486,38 @@ def update_graph(temperature, response, units,
       ion_symbols = np.array(ion_symbols)
     #spec_aeff = np.array(spec_aeff)
     #Make the needle plot via the stem_plot function above
+
+      t1 = time.time()
       if units.lower()=='kev':
-        needle_plot = stem_plot(HC_IN_KEV_A/lines['Lambda'], lines['Epsilon_Err'])
+#        needle_plot = stem_plot(HC_IN_KEV_A/lines['Lambda'], lines['Epsilon_Err'])
+        xvals = HC_IN_KEV_A/lines['Lambda']
       else:
-        needle_plot = stem_plot(lines['Lambda'], lines['Epsilon_Err'])
+        xvals = lines['Lambda']
+#        needle_plot = stem_plot(lines['Lambda'], lines['Epsilon_Err'])
+      t2 = time.time()
+      print("Time for generating needle_plot: %fs"%(t2-t1))
+
+      trace2 = go.Scatter(x=xvals, y=lines['Epsilon_Err'],
+#            line=dict(
+#                shape = 'hv',
+#                color = '#9467bd'
+#            ),
+            mode='markers',
+            text = ion_symbols)
+
     #Update each stick with the generated ion symbols found in thhe ion_symbols array
-      needle_plot.update_traces(hovertext=ion_symbols, hoverinfo='text')
+#      needle_plot.update_traces(hovertext=ion_symbols, hoverinfo='text')
 #
-      data_list = [dat for dat in needle_plot['data']]
+      data_list = [trace2]
     else:
       data_list = []
+
+    t1 = time.time()
     data_list.append(trace1)
+    t2 = time.time()
+    print("Time for appending traces: %fs"%(t2-t1))
+    print(" There are %i traces"%(len(data_list)))
+
     #data_list.append(peak_trace)
     #Return the traces into a graph environment
     return {
