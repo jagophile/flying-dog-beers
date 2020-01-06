@@ -302,23 +302,30 @@ responses = spectraldataobject.responselist.keys()
 app.layout = html.Div([
   html.Div([
             html.Div([
-            html.Label('Temperature (K)'),
-#            dcc.Slider(
-#                id='temperature',
-#                min =4,
-#                max =9,
-#                step=0.1,
-#                value=6,
-#            ),
-#            html.Div(id='temperature-output-container'),
-            dcc.Dropdown(
+            html.Div(id='temperature-output-container'),
+            dcc.Slider(
                 id='temperature',
-                options=[
-                {'label': np.format_float_scientific(i),
-                'value': i} for i in temperatures
-                ],
-                value=1e6
+                min =4,
+                max =9,
+                step=0.1,
+                value=6,
+                marks={4:{'label':'10^4K','style':{'color':'#AA0000'}},
+                       5:{'label':'10^5K','style':{'color':'#AA0000'}},
+                       6:"10^6K",
+                       7:'10^7K',
+                       8:'10^8K',
+                       9:'10^9K'},
+                
             ),
+            
+#            dcc.Dropdown(
+#                id='temperature',
+#                options=[
+#                {'label': np.format_float_scientific(i),
+#                'value': i} for i in temperatures
+#                ],
+#                value=1e6
+ #           ),
             html.Label('Spectral Units'),
             dcc.RadioItems(
                 id='units',
@@ -379,6 +386,13 @@ app.layout = html.Div([
         }
         )
 ])
+
+@app.callback(dash.dependencies.Output('temperature-output-container', 'children'),
+              [dash.dependencies.Input('temperature','value')])
+def update_temperature(value):
+  return("Temperature: 10^%.1f K, %.1e K, %.4f keV"%(value, 10**value, 10**value/1000/11604.5))
+    
+    
 @app.callback(dash.dependencies.Output('atomdb_visual', 'figure'),
     [dash.dependencies.Input('temperature', 'value'),
     dash.dependencies.Input('response', 'value'),
@@ -389,15 +403,15 @@ app.layout = html.Div([
 
 
 
-def update_graph(temperature, response, units,
+def update_graph(logtemperature, response, units,
     xaxis_type, yaxis_type, show_needleplot):
 
 
     if units == 'Angstroms':
-        xaxis = 'Wavelength(%s)'%(units)
+        xaxis = 'Wavelength (%s)'%(units)
         unit = 'A'
     else:
-        xaxis = 'Energy(%s)'%(units)
+        xaxis = 'Energy (%s)'%(units)
         unit = 'keV'
 
 #    rmf = rmfdict[response]
@@ -407,7 +421,8 @@ def update_graph(temperature, response, units,
       needleplot = True
     else:
       needleplot=False
-
+    
+    temperature=10**logtemperature
     iT = np.argmin(np.abs(np.logspace(4,9,51)-temperature))
 
     binedges, displayspec = generate_values(iT, unit, response)
@@ -525,7 +540,7 @@ def update_graph(temperature, response, units,
     'layout': go.Layout(
             xaxis={'title': xaxis, 'type': 'linear' if xaxis_type == 'Linear' else 'log'},
             yaxis={
-                'title': 'Emissivity*Aeff (ph cm^5 s^-1 bin^-1)',
+                'title': 'Emissivity*A<sub>eff</sub> (ph cm<sup>5</sup> s<sup>-1</sup> bin<sup>-1</sup>)',
                 'type': 'linear' if yaxis_type == 'Linear' else 'log'
                 },
             #margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
@@ -537,4 +552,4 @@ def update_graph(temperature, response, units,
     }
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug=False)
