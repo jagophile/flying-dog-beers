@@ -302,7 +302,6 @@ responses = spectraldataobject.responselist.keys()
 app.layout = html.Div([
   html.Div([
             html.Div([
-            html.Label(id='temperature-output-container'),
             dcc.Slider(
                 id='temperature',
                 min =4,
@@ -317,6 +316,8 @@ app.layout = html.Div([
                        9:'10^9K'},
 
             ),
+            html.Label(id='temperature-output-container'),
+
 
 #            dcc.Dropdown(
 #                id='temperature',
