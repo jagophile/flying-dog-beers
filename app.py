@@ -302,7 +302,7 @@ responses = spectraldataobject.responselist.keys()
 app.layout = html.Div([
   html.Div([
             html.Div([
-            html.Div(id='temperature-output-container'),
+            html.Label(id='temperature-output-container'),
             dcc.Slider(
                 id='temperature',
                 min =4,
@@ -355,7 +355,7 @@ app.layout = html.Div([
                 labelStyle={'display': 'inline-block'}
                 ),
 
-                ], style={'width': '33%', 'display': 'inline-block'}),
+                ], style={'width': '30%', 'display': 'inline-block'}),
             html.Div([
                 html.Label('Y Axis Type'),
                 dcc.RadioItems(
@@ -365,17 +365,17 @@ app.layout = html.Div([
                 labelStyle={'display': 'inline-block'}
                 ),
 
-                ], style={'width': '33%', 'display': 'inline-block'}),
+                ], style={'width': '30%', 'display': 'inline-block'}),
             html.Div([
                 html.Label('Show Lines'),
                 dcc.RadioItems(
                 id='show_needleplot',
                 options=[{'label': i, 'value': i} for i in ['Yes', 'No']],
-                value='No',
+                value='Yes',
                 labelStyle={'display': 'inline-block'}
                 ),
 
-                ], style={'width': '33%', 'display': 'inline-block'}),
+                ], style={'width': '30%', 'display': 'inline-block'}),
 
     ], style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),
     ]),
