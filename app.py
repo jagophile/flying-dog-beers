@@ -315,9 +315,9 @@ app.layout = html.Div([
                        7:'10^7K',
                        8:'10^8K',
                        9:'10^9K'},
-                
+
             ),
-            
+
 #            dcc.Dropdown(
 #                id='temperature',
 #                options=[
@@ -391,8 +391,8 @@ app.layout = html.Div([
               [dash.dependencies.Input('temperature','value')])
 def update_temperature(value):
   return("Temperature: 10^%.1f K, %.1e K, %.4f keV"%(value, 10**value, 10**value/1000/11604.5))
-    
-    
+
+
 @app.callback(dash.dependencies.Output('atomdb_visual', 'figure'),
     [dash.dependencies.Input('temperature', 'value'),
     dash.dependencies.Input('response', 'value'),
@@ -421,7 +421,7 @@ def update_graph(logtemperature, response, units,
       needleplot = True
     else:
       needleplot=False
-    
+
     temperature=10**logtemperature
     iT = np.argmin(np.abs(np.logspace(4,9,51)-temperature))
 
