@@ -343,7 +343,7 @@ app.layout = html.Div([
 #                ],
 #                value=1e6
  #           ),
-            html.Label('Spectral Units', style={'padding':'24px'}),
+            html.Label('Spectral Units'),#, style={'padding':'24px'}),
             dcc.RadioItems(
                 id='units',
                 options = [
@@ -395,7 +395,7 @@ app.layout = html.Div([
                 ], style={'width': '30%', 'display': 'inline-block'}),
 
     ], style={'width': '45%', 'float': 'right', 'display': 'inline-block','padding':'24px'}),
-    ]),
+    ], style={'padding':'24px'}),
     dcc.Graph(
         id='atomdb_visual',
         style={
@@ -457,95 +457,64 @@ def update_graph(logtemperature, response, units,
       spectraldata=spectraldataobject.get_spectrum(response)
     #Get the emissivity information from pyatomdb
 #    erange = [min(s.ebins_out), max(s.ebins_out)]
-      emis_info = spectraldata['llist'][iT] #s.return_linelist(temperature, erange,specunit='keV',\
-                                  #teunit='K', apply_aeff=True, nearest=True)
+      if iT in spectraldata['llist'].keys():
+        emis_info = spectraldata['llist'][iT] #s.return_linelist(temperature, erange,specunit='keV',\
+                                    #teunit='K', apply_aeff=True, nearest=True)
 
-      max_peak = displayspec.max()
+        max_peak = displayspec.max()
 
 
-      lines = emis_info
-      linemissaeff = lines['Epsilon_Err']
-      lines = lines[linemissaeff > 0]
-      linemissaeff = linemissaeff[linemissaeff > 0]
+        lines = emis_info
+        linemissaeff = lines['Epsilon_Err']
+        lines = lines[linemissaeff > 0]
+        linemissaeff = linemissaeff[linemissaeff > 0]
 
 #    if (len(lines)>0):
 #
 #      linemissaeff*= max_peak/max(linemissaeff)
 
-      if len(lines)>1000:
-          ind = np.argsort(linemissaeff)[-1000:]
-          lines = lines[ind]
-          linemissaeff=linemissaeff[ind]
+        if len(lines)>1000:
+            ind = np.argsort(linemissaeff)[-1000:]
+            lines = lines[ind]
+            linemissaeff=linemissaeff[ind]
 
-      t1 = time.time()
-      ion_symbols = []
-      for l in lines:
-#<font color="FF00CC">
-        ion_symbols.append('<a href="http://www.atomdb.org/Webguide/transition_information.php?lower=%i&upper=%i&z0=%i&z1=%i" target="_blank">%s %i->%i</a>'%\
-                         (l['LowerLev'], l['UpperLev'], l['Element'], l['Ion']-1,spectroscopic_name(l['Element'],l['Ion']),l['UpperLev'], l['LowerLev']))
-      t2 = time.time()
-
-      print("Time for generating symbols: %fs"%(t2-t1))
-
-    #peak_mask = np.where(np.logical_and(displayspec<=max_peak,displayspec>=0.5*max_peak))
-    #measured_peaks = displayspec[peak_mask]
-    #measured_xs = binedges[peak_mask]
+        t1 = time.time()
+        ion_symbols = []
+        for l in lines:
 
 
-    #Find the peaks in the data
-#    epeaks = emis[emis['Epsilon']>1e-20]
+          ion_symbols.append('<a href="http://www.atomdb.org/Webguide/transition_information.php?lower=%i&upper=%i&z0=%i&z1=%i" target="_blank">%s %i->%i</a>'%\
+                           (l['LowerLev'], l['UpperLev'], l['Element'], l['Ion']-1,spectroscopic_name(l['Element'],l['Ion']),l['UpperLev'], l['LowerLev']))
+        t2 = time.time()
 
-#    indices = find_peaks(displayspec, distance=10, threshold=1e-25)[0]
+        print("Time for generating symbols: %fs"%(t2-t1))
 
-    #Generate the stem plot from the data
-
-    #stem_edges
-
-    #stem_edges = [binedges[j] for j in indices]
-    #stem_spec = [displayspec[j] for j in indices]
-
-    #Make a list of the ion symbols to be displayed on hover
-#    ion_symbols = []
-    #spec_aeff = []
-    #for eps in stem_spec:
-    #    index, aeff_specs = find_nearest(emis, eps)
-
-        #Append the decoded bytes into the ion_symbols list used for
-        #the hovertext property later
-    #    ion_symbols.append(pyatomdb.atomic.spectroscopic_name(emis_info['Element'][index],emis_info['Ion'][index]))
-    #    spec_aeff.append(aeff_specs)
+        ion_symbols = np.array(ion_symbols)
 
 
-      ion_symbols = np.array(ion_symbols)
-    #spec_aeff = np.array(spec_aeff)
-    #Make the needle plot via the stem_plot function above
+        t1 = time.time()
+        if units.lower()=='kev':
 
-      t1 = time.time()
-      if units.lower()=='kev':
-#        needle_plot = stem_plot(HC_IN_KEV_A/lines['Lambda'], lines['Epsilon_Err'])
-        xvals = HC_IN_KEV_A/lines['Lambda']
-      else:
-        xvals = lines['Lambda']
-#        needle_plot = stem_plot(lines['Lambda'], lines['Epsilon_Err'])
-      t2 = time.time()
-      print("Time for generating needle_plot: %fs"%(t2-t1))
+          xvals = HC_IN_KEV_A/lines['Lambda']
+        else:
+          xvals = lines['Lambda']
+        t2 = time.time()
+        print("Time for generating needle_plot: %fs"%(t2-t1))
 
-      trace2 = go.Scattergl(x=xvals, y=lines['Epsilon_Err'],
-#            line=dict(
-#                shape = 'hv',
-#                color = '#9467bd'
-#            ),
-            mode='markers',
-            hovertext = ion_symbols,\
-            hoverinfo='text',\
-            hoverlabel={'bgcolor':'#DDDDDD'},\
-            #on_click=hello,\
-            )
+        trace2 = go.Scattergl(x=xvals, y=lines['Epsilon_Err'],
+              mode='markers',
+              hovertext = ion_symbols,\
+              hoverinfo='text',\
+              hoverlabel={'bgcolor':'#DDDDDD'},\
+              )
 
     #Update each stick with the generated ion symbols found in thhe ion_symbols array
 #      needle_plot.update_traces(hovertext=ion_symbols, hoverinfo='text')
 #
-      data_list = [trace2]
+        data_list = [trace2]
+      else:
+        # no lines to draw
+        data_list = []
     else:
       data_list = []
 
@@ -576,4 +545,4 @@ def hello(trace, point, state):
   print("HELLO")
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
