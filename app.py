@@ -343,7 +343,7 @@ app.layout = html.Div([
 #                ],
 #                value=1e6
  #           ),
-            html.Label('Spectral Units', style={'padding_top':'24px'}),
+            html.Label('Spectral Units', style={'padding':'24px'}),
             dcc.RadioItems(
                 id='units',
                 options = [
@@ -353,7 +353,7 @@ app.layout = html.Div([
                 labelStyle={'display': 'inline-block'},
              ),
             ],
-            style={'width': '45%', 'display': 'inline-block', 'padding_top':'24px'}),
+            style={'width': '45%', 'display': 'inline-block', 'padding':'24px'}),
             html.Div([
             html.Label('Response File'),
             dcc.Dropdown(
@@ -394,7 +394,7 @@ app.layout = html.Div([
 
                 ], style={'width': '30%', 'display': 'inline-block'}),
 
-    ], style={'width': '45%', 'float': 'right', 'display': 'inline-block','padding_top':'24px'}),
+    ], style={'width': '45%', 'float': 'right', 'display': 'inline-block','padding':'24px'}),
     ]),
     dcc.Graph(
         id='atomdb_visual',
