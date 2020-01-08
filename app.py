@@ -338,7 +338,7 @@ app.layout = html.Div([
                 labelStyle={'display': 'inline-block'},
              ),
             ],
-            style={'width': '45%', 'display': 'inline-block', 'padding':'24px'}),
+            style={'width': '45%', 'display': 'inline-block', 'padding_top':'24px'}),
             html.Div([
             html.Label('Response File'),
             dcc.Dropdown(
