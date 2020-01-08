@@ -16,8 +16,8 @@ ibu_values=[35, 60, 85, 75]
 abv_values=[5.4, 7.1, 9.2, 4.3]
 color1='lightblue'
 color2='darkgreen'
-mytitle='Plotting Spectral with AtomDB'
-tabtitle='Plotting Spectral with AtomDB'
+mytitle='Plotting Spectra with AtomDB'
+tabtitle='Plotting Spectra with AtomDB'
 #myheading='Flying Dog Beers'
 #label1='IBU'
 #label2='ABV'
@@ -300,6 +300,21 @@ temperatures = np.around(temperatures, decimals=-4)
 responses = spectraldataobject.responselist.keys()
 
 app.layout = html.Div([
+  html.Img(src='assets/ATOMDB_header.jpg'),
+  html.P('This is the AtomDB online spectral plotting program. '+\
+         'Select the response file from the table on the right, and then '+\
+         'adjust the temperature or axes properties to see what the '+\
+         'spectrum looks like. '+\
+         'Lines can be identified by hover over the points. Clicking on the labels' +\
+         ' (sorry, this can be a bit fiddly) will open a description of the line in '+\
+         'a background tab. If you hover so the label appears, then click to its right '+\
+         'where the label was, it will follow the link. '+\
+         'Currently there is only a limited set of responses, we are '+\
+
+         'working to update this. Send suggestions and we\'ll add them sooner.'),
+
+  html.A("Contact us", href='http://www.atomdb.org/contact.php'),
+  html.Hr(),
   html.Div([
             html.Div([
              html.Label(id='temperature-output-container'),
@@ -328,7 +343,7 @@ app.layout = html.Div([
 #                ],
 #                value=1e6
  #           ),
-            html.Label('Spectral Units', style={'padding':'24px'}),
+            html.Label('Spectral Units', style={'padding_top':'24px'}),
             dcc.RadioItems(
                 id='units',
                 options = [
@@ -338,7 +353,7 @@ app.layout = html.Div([
                 labelStyle={'display': 'inline-block'},
              ),
             ],
-            style={'width': '45%', 'display': 'inline-block', 'padding_top':'24px'}),
+            style={'width': '45%', 'display': 'inline-block'}),#, 'padding_top':'24px'}),
             html.Div([
             html.Label('Response File'),
             dcc.Dropdown(
@@ -429,7 +444,7 @@ def update_graph(logtemperature, response, units,
 
     binedges, displayspec = generate_values(iT, unit, response)
     #Draw the traces
-    trace1 = go.Scatter(x=binedges, y=displayspec,
+    trace1 = go.Scattergl(x=binedges, y=displayspec,
             line=dict(
                 shape = 'hv',
                 color = '#9467bd'
@@ -465,8 +480,9 @@ def update_graph(logtemperature, response, units,
       t1 = time.time()
       ion_symbols = []
       for l in lines:
-
-        ion_symbols.append('<a href="http://www.atomdb.org/Webguide/transition_information.php?lower=%i&upper=%i&z0=%i&z1=%i" target="_blank">%s</a>'%(l['LowerLev'], l['UpperLev'], l['Element'], l['Ion']-1,spectroscopic_name(l['Element'],l['Ion'])))
+#<font color="FF00CC">
+        ion_symbols.append('<a href="http://www.atomdb.org/Webguide/transition_information.php?lower=%i&upper=%i&z0=%i&z1=%i" target="_blank">%s %i->%i</a>'%\
+                         (l['LowerLev'], l['UpperLev'], l['Element'], l['Ion']-1,spectroscopic_name(l['Element'],l['Ion']),l['UpperLev'], l['LowerLev']))
       t2 = time.time()
 
       print("Time for generating symbols: %fs"%(t2-t1))
@@ -514,13 +530,17 @@ def update_graph(logtemperature, response, units,
       t2 = time.time()
       print("Time for generating needle_plot: %fs"%(t2-t1))
 
-      trace2 = go.Scatter(x=xvals, y=lines['Epsilon_Err'],
+      trace2 = go.Scattergl(x=xvals, y=lines['Epsilon_Err'],
 #            line=dict(
 #                shape = 'hv',
 #                color = '#9467bd'
 #            ),
             mode='markers',
-            text = ion_symbols)
+            hovertext = ion_symbols,\
+            hoverinfo='text',\
+            hoverlabel={'bgcolor':'#DDDDDD'},\
+            #on_click=hello,\
+            )
 
     #Update each stick with the generated ion symbols found in thhe ion_symbols array
 #      needle_plot.update_traces(hovertext=ion_symbols, hoverinfo='text')
@@ -552,6 +572,8 @@ def update_graph(logtemperature, response, units,
             showlegend=False,
         )
     }
+def hello(trace, point, state):
+  print("HELLO")
 
 if __name__ == '__main__':
     app.run_server(debug=True)
