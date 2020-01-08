@@ -328,7 +328,7 @@ app.layout = html.Div([
 #                ],
 #                value=1e6
  #           ),
-            html.Label('Spectral Units'),
+            html.Label('Spectral Units', style={'padding':'24px'}),
             dcc.RadioItems(
                 id='units',
                 options = [
