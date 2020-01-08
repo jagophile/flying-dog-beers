@@ -302,6 +302,7 @@ responses = spectraldataobject.responselist.keys()
 app.layout = html.Div([
   html.Div([
             html.Div([
+             html.Label(id='temperature-output-container'),
             dcc.Slider(
                 id='temperature',
                 min =4,
@@ -316,7 +317,7 @@ app.layout = html.Div([
                        9:'10^9K'},
 
             ),
-            html.Label(id='temperature-output-container'),
+
 
 
 #            dcc.Dropdown(
@@ -337,7 +338,7 @@ app.layout = html.Div([
                 labelStyle={'display': 'inline-block'},
              ),
             ],
-            style={'width': '48%', 'display': 'inline-block'}),
+            style={'width': '45%', 'display': 'inline-block', 'padding':'24px'}),
             html.Div([
             html.Label('Response File'),
             dcc.Dropdown(
@@ -378,7 +379,7 @@ app.layout = html.Div([
 
                 ], style={'width': '30%', 'display': 'inline-block'}),
 
-    ], style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),
+    ], style={'width': '45%', 'float': 'right', 'display': 'inline-block','padding_top':'24px'}),
     ]),
     dcc.Graph(
         id='atomdb_visual',
@@ -553,4 +554,4 @@ def update_graph(logtemperature, response, units,
     }
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)
